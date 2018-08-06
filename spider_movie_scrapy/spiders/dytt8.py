@@ -85,9 +85,24 @@ class Dytt8Spider(scrapy.Spider):
         grid_view = response.css('.co_area2')
         name = grid_view.css('.title_all h1 font::text').extract_first()
         imgUrl = grid_view.css('.co_content8 #Zoom p img::attr(src)').extract_first()
-        content = grid_view.css('.co_content8 #Zoom p::text').extract()
+        content = grid_view.css('.co_content8 #Zoom p').extract_first()
         magneticLink = grid_view.css('.co_content8 #Zoom p a::attr(href)').extract_first()
         downloadUrl = grid_view.css('.co_content8 #Zoom table td a::attr(href)').extract_first()
+
+        translateName = re.search(r'译\s+名(.*?)<br>', content).group(1)
+        title = re.search(r'片\s+名(.*?)<br>', content).group(1)
+        time = re.search(r'年\s+代(.*?)<br>', content).group(1)
+        place = re.search(r'产\s+地(.*?)<br>', content).group(1)
+        category = re.search(r'类\s+别(.*?)<br>', content).group(1)
+        language = re.search(r'语\s+言(.*?)<br>', content).group(1)
+        subtitle = re.search(r'字\s+幕(.*?)<br>', content).group(1)
+        dbScore = re.search(r'豆瓣评分(.*?)<br>', content).group(1)
+        length = re.search(r'片\s+长(.*?)<br>', content).group(1)
+        director = re.search(r'导\s+演(.*?)<br>', content).group(1)
+
+        pattern = re.compile(r'主\s+演(.*?)<br><br>', re.S)
+        star = re.search(pattern, content).group(1)
+        info = re.search(r'简\s+介.*?<br><br>(.*?)<br>', content).group(1)
 
         # print(content)
         # 存入数据库
@@ -97,19 +112,19 @@ class Dytt8Spider(scrapy.Spider):
         item['magneticLink'] = magneticLink
         item['downloadUrl'] = downloadUrl
 
-        # item['actor'] = content[0].strip()
-        item['translateName'] = content[2].strip()
-        item['title'] = content[3].strip()
-        item['time'] = content[4].strip()
-        item['placeOfOrigin'] = content[5].strip()
-        item['category'] = content[6].strip()
-        item['language'] = content[7].strip()
-        item['subtitle'] = content[8].strip()
-        item['dbScore'] = content[9].strip()
-        item['length'] = content[15].strip()
-        item['director'] = content[16].strip()
-        # item['star'] = content[0].strip()
-        # item['info'] = content[0].strip()
+        item['translateName'] = translateName.strip()
+        item['title'] = title.strip()
+        item['time'] = time.strip()
+        item['place'] = place.strip()
+        item['category'] = category.strip()
+        item['language'] = language.strip()
+        item['subtitle'] = subtitle.strip()
+        item['dbScore'] = dbScore.strip()
+        item['length'] = length.strip()
+        item['director'] = director.strip()
+        item['star'] = star.strip()
+        item['info'] = info.strip()
+
         yield item
 
 

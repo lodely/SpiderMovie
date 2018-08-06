@@ -22,7 +22,7 @@ class SpiderMovieItem(scrapy.Item):
     # 年代
     time = scrapy.Field()
     # 产地
-    placeOfOrigin = scrapy.Field()
+    place = scrapy.Field()
     # 类别
     category = scrapy.Field()
     # 语言
