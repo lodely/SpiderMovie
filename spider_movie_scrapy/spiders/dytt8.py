@@ -60,7 +60,7 @@ class Dytt8Spider(scrapy.Spider):
         # print(totalPageUrl)
 
         # 重新组装每页url
-        for page in totalPageUrl:
+        for page in totalPageUrl[11:]:
             new_url = resurl.replace('index.html', page)
             # print(new_url)
             yield scrapy.Request(url=new_url, callback=self.page_parse)
@@ -85,24 +85,9 @@ class Dytt8Spider(scrapy.Spider):
         grid_view = response.css('.co_area2')
         name = grid_view.css('.title_all h1 font::text').extract_first()
         imgUrl = grid_view.css('.co_content8 #Zoom p img::attr(src)').extract_first()
-        content = grid_view.css('.co_content8 #Zoom p').extract_first()
+        content = grid_view.css('.co_content8 #Zoom').extract_first()
         magneticLink = grid_view.css('.co_content8 #Zoom p a::attr(href)').extract_first()
         downloadUrl = grid_view.css('.co_content8 #Zoom table td a::attr(href)').extract_first()
-
-        translateName = re.search(r'译\s+名(.*?)<br>', content).group(1)
-        title = re.search(r'片\s+名(.*?)<br>', content).group(1)
-        time = re.search(r'年\s+代(.*?)<br>', content).group(1)
-        place = re.search(r'产\s+地(.*?)<br>', content).group(1)
-        category = re.search(r'类\s+别(.*?)<br>', content).group(1)
-        language = re.search(r'语\s+言(.*?)<br>', content).group(1)
-        subtitle = re.search(r'字\s+幕(.*?)<br>', content).group(1)
-        dbScore = re.search(r'豆瓣评分(.*?)<br>', content).group(1)
-        length = re.search(r'片\s+长(.*?)<br>', content).group(1)
-        director = re.search(r'导\s+演(.*?)<br>', content).group(1)
-
-        pattern = re.compile(r'主\s+演(.*?)<br><br>', re.S)
-        star = re.search(pattern, content).group(1)
-        info = re.search(r'简\s+介.*?<br><br>(.*?)<br>', content).group(1)
 
         # print(content)
         # 存入数据库
@@ -112,18 +97,78 @@ class Dytt8Spider(scrapy.Spider):
         item['magneticLink'] = magneticLink
         item['downloadUrl'] = downloadUrl
 
-        item['translateName'] = translateName.strip()
-        item['title'] = title.strip()
-        item['time'] = time.strip()
-        item['place'] = place.strip()
-        item['category'] = category.strip()
-        item['language'] = language.strip()
-        item['subtitle'] = subtitle.strip()
-        item['dbScore'] = dbScore.strip()
-        item['length'] = length.strip()
-        item['director'] = director.strip()
-        item['star'] = star.strip()
-        item['info'] = info.strip()
+        try:
+            translateName = re.search(r'译\s+名(.*?)<br>', content).group(1)
+            item['translateName'] = translateName.strip()
+        except Exception:
+            pass
+
+        try:
+            title = re.search(r'片\s+名(.*?)<br>', content).group(1)
+            item['title'] = title.strip()
+        except Exception:
+            pass
+
+        try:
+            time = re.search(r'年\s+代(.*?)<br>', content).group(1)
+            item['time'] = time.strip()
+        except Exception:
+            pass
+
+        try:
+            place = re.search(r'(产\s+地|国\s+家)(.*?)<br>', content).group(2)
+            item['place'] = place.strip()
+        except Exception:
+            pass
+
+        try:
+            category = re.search(r'类\s+别(.*?)<br>', content).group(1)
+            item['category'] = category.strip()
+        except Exception:
+            pass
+
+        try:
+            language = re.search(r'语\s+言(.*?)<br>', content).group(1)
+            item['language'] = language.strip()
+        except Exception:
+            pass
+
+        try:
+            subtitle = re.search(r'字\s+幕(.*?)<br>', content).group(1)
+            item['subtitle'] = subtitle.strip()
+        except Exception:
+            pass
+
+        try:
+            length = re.search(r'片\s+长(.*?)<br>', content).group(1)
+            item['length'] = length.strip()
+        except Exception:
+            pass
+
+        try:
+            director = re.search(r'导\s+演(.*?)<br>', content).group(1)
+            item['director'] = director.strip()
+        except Exception:
+            pass
+
+        try:
+            dbScore = re.search(r'豆瓣评分(.*?)<br>', content).group(1)
+            item['dbScore'] = dbScore.strip()
+        except Exception:
+            pass
+
+        try:
+            pattern = re.compile(r'主\s+演(.*?)<br><br>', re.S)
+            star = re.search(pattern, content).group(1)
+            item['star'] = star.strip()
+        except Exception:
+            pass
+
+        try:
+            info = re.search(r'简\s+介.*?<br><br>(.*?)<br>', content).group(1)
+            item['info'] = info.strip()
+        except Exception:
+            pass
 
         yield item
 
