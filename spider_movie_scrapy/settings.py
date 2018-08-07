@@ -14,8 +14,12 @@ BOT_NAME = 'spider_movie_scrapy'
 SPIDER_MODULES = ['spider_movie_scrapy.spiders']
 NEWSPIDER_MODULE = 'spider_movie_scrapy.spiders'
 
-MONGO_URL = 'localhost'
-MONGO_DB = 'dytt8Movie'
+
+MYSQL_HOST = 'localhost'
+MYSQL_DBNAME = 'spider_movie'
+MYSQL_USER = 'root'
+MYSQL_PASSWD = 'root'
+MYSQL_PORT = 3306
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'spider_movie_scrapy (+http://www.yourdomain.com)'
 
@@ -66,8 +70,9 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   # 'spider_movie_scrapy.pipelines.SpiderMovieScrapyPipeline': 300,
-    'spider_movie_scrapy.pipelines.MongoPipeline': 300,
+   # 'spider_movie_scrapy.pipelines.SpiderMovieScrapyPipeline': 100,
+   #  'spider_movie_scrapy.pipelines.MongoPipeline': 300,
+    'spider_movie_scrapy.pipelines.MoviePipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
